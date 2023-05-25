@@ -22,8 +22,7 @@ import { createInertiaApp, Link } from '@inertiajs/inertia-vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { InertiaProgress } from '@inertiajs/progress';
 import { createRouter, createWebHistory } from 'vue-router';
-import { ZiggyVue } from '../../tightenco/ziggy/dist/vue.m.js';
-
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -73,7 +72,7 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(router)
-            .use(ZiggVue)
+            .use(ZiggyVue)
             .component('InertiaLink', Link)
             .mount(el);
 
