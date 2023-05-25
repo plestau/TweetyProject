@@ -3,8 +3,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "prod": "vite build --ssr",
-        "postinstall": "npm run prod"
+        "production": "cross-env NODE_ENV=production vite build"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
@@ -13,6 +12,7 @@
         "@vitejs/plugin-vue": "^4.0.0",
         "@vue/server-renderer": "^3.2.31",
         "autoprefixer": "^10.4.12",
+        "cross-env": "^7.0.3",
         "axios": "^1.1.2",
         "bootstrap": "^5.2.3",
         "laravel-vite-plugin": "^0.7.2",
