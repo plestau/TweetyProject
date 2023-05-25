@@ -23,9 +23,13 @@ Route::get('/', [PostController::class, 'index'])->name('post.home');
 Route::post('/posts', [PostController::class, 'store'])->name('post.store');
 Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 
-Route::inertia('notifications', 'Notifications')->name('pages.notifications');
+Route::get('/notifications', function () {
+    return Inertia::render('Notifications');
+})->name('pages.notifications');
 
-Route::inertia('messages', 'Messages')->name('pages.messages');
+Route::get('/messages', function () {
+    return Inertia::render('Messages');
+})->name('pages.messages');
 
 
 Route::get('/logout', function () {
@@ -41,6 +45,8 @@ Route::post('/post/{post}/undislike', [ProfileController::class, 'undislike']);
 Route::get('/profile/{userId}', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/profile', [ProfileController::class, 'showProfile'])->name('pages.profile');
 
+Route::get('/register', [HomeController::class, 'register'])->name('register');
+Route::get('/login', [HomeController::class, 'login'])->name('login');
 require __DIR__.'/auth.php';
 
 Auth::routes();
