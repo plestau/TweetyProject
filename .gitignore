@@ -5,7 +5,6 @@
 /public/storage
 /storage/*.key
 /vendor
-!/vendor/tightenco/ziggy
 .env
 .env.backup
 .env.production
