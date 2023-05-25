@@ -1,1 +1,1 @@
-web: npm run production --profile ./resources/js
+web: heroku-php-fpm public/
