@@ -24,6 +24,33 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="Username" type="text" class="form-control @error('Username') is-invalid @enderror" name="Username" value="{{ old('Username') }}" required autocomplete="Username" autofocus>
+
+                                @error('Username')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="Biography" class="col-md-4 col-form-label text-md-end">{{ __('Biography') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="Biography" type="text" class="form-control @error('Biography') is-invalid @enderror" name="Biography" value="{{ old('Biography') }}" required autocomplete="Biography" autofocus>
+
+                                @error('Biography')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
