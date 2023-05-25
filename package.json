@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "npm run production",
         "production": "cross-env NODE_ENV=production vite build"
     },
     "devDependencies": {
