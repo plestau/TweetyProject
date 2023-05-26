@@ -11,9 +11,9 @@
 </template>
 
 <script>
-// import Login from '@/Pages/Auth/Login.vue'; // Importamos el componente Login
+const Login = require('@/Pages/Auth/Login.vue'); // Importamos el componente Login con CommonJS
 
-export default {
+module.exports = {
     components: {
         Login, // Registramos el componente Login
     },
@@ -23,4 +23,5 @@ export default {
         session: Object,
     },
 };
+
 </script>
