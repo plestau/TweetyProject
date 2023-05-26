@@ -5,7 +5,7 @@
                 <div class="mb-4">
                     <h1 class="text-2xl font-bold text-gray-700 text-center">Iniciar sesión</h1>
                 </div>
-                <login :errors="errors" :session="session" />
+                <Login :errors="errors" :session="session" />
             </div>
         </div>
     </div>
