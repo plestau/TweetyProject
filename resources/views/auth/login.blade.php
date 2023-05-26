@@ -5,15 +5,16 @@
                 <div class="mb-4">
                     <h1 class="text-2xl font-bold text-gray-700 text-center">Iniciar sesión</h1>
                 </div>
+                <Login :errors="errors" :session="session" />
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Login from '@/Pages/Auth/Login.vue'; // Importamos el componente Login con ES6
+import Login from '@/Pages/Auth/Login.vue'; // Importamos el componente Login
 
-module.exports = {
+export default {
     components: {
         Login, // Registramos el componente Login
     },
@@ -23,5 +24,4 @@ module.exports = {
         session: Object,
     },
 };
-
 </script>
