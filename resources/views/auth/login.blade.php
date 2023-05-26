@@ -11,7 +11,7 @@
 </template>
 
 <script>
-const Login = require('@/Pages/Auth/Login.vue'); // Importamos el componente Login con CommonJS
+import Login from '@/Pages/Auth/Login.vue'; // Importamos el componente Login con ES6
 
 module.exports = {
     components: {
