@@ -2,9 +2,8 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "npm run production",
-        "production": "cross-env NODE_ENV=production vite build",
-        "postinstall": "npm run prod"
+        "build": "cross-env NODE_ENV=production vite build",
+        "postinstall": "npm run build"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
