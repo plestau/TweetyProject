@@ -3,7 +3,8 @@
     "scripts": {
         "dev": "vite",
         "build": "npm run production",
-        "production": "cross-env NODE_ENV=production vite build"
+        "production": "cross-env NODE_ENV=production vite build",
+        "postinstall": "npm run prod"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
