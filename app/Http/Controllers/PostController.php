@@ -23,24 +23,24 @@ class PostController extends Controller
     public function index()
     {
         $recentUsers = User::orderBy('created_at', 'desc')->take(5)->get();
-        // Obtiene el usuario actual
         $user = auth()->user();
+        $posts = Post::with('user')->orderBy('created_at', 'desc')->paginate(5);
     
-        // Obtiene todos los posts con el usuario asociado
-        $posts = Post::with('user')->orderBy('created_at', 'desc')->get();
-    
-        // Para cada post, comprueba si el usuario le ha dado like o dislike
         foreach ($posts as $post) {
             $post->hasLiked = $post->likes()->where('user_id', $user->id)->where('type', true)->exists();
             $post->hasDisliked = $post->likes()->where('user_id', $user->id)->where('type', false)->exists();
         }
     
-        // Envía los posts a la vista
+        if (request()->expectsJson()) {
+            return response()->json($posts);
+        }
+    
         return Inertia::render('Home', [
             'posts' => $posts,
             'recentUsers' => $recentUsers
         ]);
-    }    
+    }
+        
      
 
     /**

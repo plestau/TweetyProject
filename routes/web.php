@@ -44,6 +44,9 @@ Route::post('/post/{post}/undislike', [ProfileController::class, 'undislike']);
 
 Route::get('/profile/{userId}', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/profile', [ProfileController::class, 'showProfile'])->name('pages.profile');
+Route::post('/profile/update/name', [ProfileController::class, 'updateName'])->name('profile.update.name');
+Route::post('/profile/update/biography', [ProfileController::class, 'updateBiography'])->name('profile.update.biography');
+
 
 Route::get('/register', [HomeController::class, 'register'])->name('register');
 Route::get('/login', [HomeController::class, 'login'])->name('login');

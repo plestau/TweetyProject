@@ -12,6 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -170,6 +172,38 @@ class ProfileController extends Controller
         return response()->json(['likes' => $post->likes]);
     }
     
-    
-    
+
+    public function updateName(Request $request): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator);
+        }
+
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->save();
+
+        return Redirect::back();
+    }
+
+    public function updateBiography(Request $request): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'biography' => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator);
+        }
+
+        $user = Auth::user();
+        $user->biography = $request->biography;
+        $user->save();
+
+        return Redirect::back();
+    }
 }

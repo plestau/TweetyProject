@@ -2,8 +2,37 @@
 import { Head, Link } from '@inertiajs/vue3';
 import Layout from '@/Layouts/Layout.vue';
 import Post from '@/Components/Post.vue';
+import { ref } from 'vue';
+import { usePage } from '@inertiajs/inertia-vue3';
+import Lapiz from 'vue-material-design-icons/Pencil.vue';
+
 defineProps({ posts: Array });
 
+let { props } = usePage();
+
+let editingName = ref(false);
+let editingBio = ref(false);
+// guardamos el nombre y la bio en variables
+let newName = ref();
+let newBiography = ref();
+
+function toggleEditName() {
+    editingName.value = !editingName.value;
+}
+
+function toggleEditBio() {
+    editingBio.value = !editingBio.value;
+}
+
+async function updateName() {
+    await Inertia.post(route('profile.update.name'), { name: newName.value });
+    editingName.value = false;
+}
+
+async function updateBiography() {
+    await Inertia.post(route('profile.update.biography'), { biography: newBiography.value });
+    editingBio.value = false;
+}
 </script>
 
 <template>
@@ -19,13 +48,13 @@ defineProps({ posts: Array });
                         <img :src="`/storage/${$page.props.auth.user.profile_photo_path}`" alt="User's profile picture"
                             class="w-full h-full object-cover">
                     </div>
-                    <p v-if="$page.props.auth.user">
-                    <p>Name: {{ $page.props.auth.user.name }}</p>
-                    <p>Username: {{ $page.props.auth.user.username }}</p>
-                    <p>Email: {{ $page.props.auth.user.email }}</p>
-                    <p>Joined: {{ new Date($page.props.auth.user.created_at).toLocaleDateString() }}</p>
-                    <p>Bio: {{ $page.props.auth.user.biography }}</p>
-                    </p>
+                    <div v-if="$page.props.auth.user">
+                        <p>Name: {{ $page.props.auth.user.name }}</p>
+                        <p>Username: {{ $page.props.auth.user.username }}</p>
+                        <p>Email: {{ $page.props.auth.user.email }}</p>
+                        <p>Joined: {{ new Date($page.props.auth.user.created_at).toLocaleDateString() }}</p>
+                        <p>Email: {{ $page.props.auth.user.email }}</p>
+                    </div>
                     <p v-else>No hay usuario autenticado.</p>
                 </div>
             </div>
@@ -34,11 +63,11 @@ defineProps({ posts: Array });
             <h2 class="font-bold text-lg mb-2">Activity</h2>
             <!-- Aquí muestra la actividad del usuario, como posts, fotos, etc. -->
             <div class="text-white">
-            <div class="flex" v-for="post in $page.props.posts" :key="post">
-                <Post :post="post" :key="post.id" />
+                <div class="flex" v-for="post in $page.props.posts" :key="post">
+                    <Post :post="post" :key="post.id" />
+                </div>
+                <div class="border-b border-b-gray-800 mt-2"></div>
             </div>
-            <div class="border-b border-b-gray-800 mt-2"></div>
-        </div>
         </section>
     </Layout>
 </template>

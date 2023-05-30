@@ -91,13 +91,16 @@ const addPost = () => {
                 <MenuItem iconString="Explore" />
                 -->
                 <Link :href="route('pages.notifications')">
-                <MenuItem iconString="Notifications" />
+                <MenuItem iconString="Notifications">
+                </MenuItem>
                 </Link>
                 <Link :href="route('pages.messages')">
-                <MenuItem iconString="Messages" />
+                <MenuItem iconString="Messages">
+                </MenuItem>
                 </Link>
                 <Link :href="route('pages.profile')">
-                <MenuItem iconString="Profile" />
+                <MenuItem iconString="Profile">
+                </MenuItem>
                 </Link>
                 <button @click="createPost = true"
                     class="lg:w-full mt-8 ml-2 text-white font-extrabold text-[22px] bg-[#1cef2e] p-3 px-3 rounded-full cursor-pointer">
@@ -113,7 +116,7 @@ const addPost = () => {
                         <button @click="logout">Cerrar sesión</button>
                     </div>
                     <div v-else>
-                        <!-- El usuario no está autenticado -->
+                        <!-- El usuario no está autenticado. ESTO NO DEBERÍA DE VERSE, YA QUE HOME ESTÁ PROTEGIDO-->
                         <div class="flex p-7 justify-evenly">
                             <!-- botones de inicio de sesion y registro-->
                             <button @click="login"
