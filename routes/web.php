@@ -34,7 +34,8 @@ Route::get('/messages', function () {
 
 Route::get('/logout', function () {
     Auth::logout();
-    return redirect('auth.register');
+    // manda a la página de registro
+    return redirect('/register');
 });
 
 Route::post('/post/{post}/like', [ProfileController::class, 'like']);
