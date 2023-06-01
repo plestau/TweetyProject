@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -22,6 +23,9 @@ use Inertia\Inertia;
 Route::get('/', [PostController::class, 'index'])->name('post.home');
 Route::post('/posts', [PostController::class, 'store'])->name('post.store');
 Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+Route::delete('/posts/{post_id}/comment/{id}', [CommentController::class, 'destroy'])->name('post.comment.destroy');
+Route::post('/posts/{id}/comment', [CommentController::class, 'store'])->name('post.comment.store');
+Route::get('/posts/{id}/comment', [CommentController::class, 'show'])->name('post.comment.show');
 
 Route::get('/notifications', function () {
     return Inertia::render('Notifications');

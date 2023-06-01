@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $recentUsers = User::orderBy('created_at', 'desc')->take(5)->get();
         $user = auth()->user();
-        $posts = Post::with('user')->orderBy('created_at', 'desc')->paginate(5);
+        $posts = Post::with(['user', 'comments'])->orderBy('created_at', 'desc')->paginate(5);
     
         foreach ($posts as $post) {
             $post->hasLiked = $post->likes()->where('user_id', $user->id)->where('type', true)->exists();
@@ -40,7 +40,7 @@ class PostController extends Controller
             'recentUsers' => $recentUsers
         ]);
     }
-        
+            
      
 
     /**
@@ -87,7 +87,7 @@ class PostController extends Controller
             $post->is_video = $extension === 'mp4' ? true : false;
             $file->move(public_path() . $path, $filename);
         }
-        $post->comments = rand(5, 500);
+        $post->comments = 0;
         $post->likes = 0;
 
         $post->save();

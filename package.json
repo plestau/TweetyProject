@@ -3,7 +3,6 @@
     "scripts": {
         "dev": "vite",
         "build": "cross-env NODE_ENV=production vite build",
-        "production": "cross-env NODE_ENV=production vite build",
         "postinstall": "npm run build"
     },
     "devDependencies": {

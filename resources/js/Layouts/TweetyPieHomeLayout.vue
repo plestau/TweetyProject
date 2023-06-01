@@ -2,7 +2,6 @@
 import { ref, defineProps } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { Link, Head, usePage } from '@inertiajs/inertia-vue3';
-import Layout from '@/Layouts/TweetyPieHomeLayout.vue';
 import { defineAsyncComponent } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import TweetyPielogo from 'vue-material-design-icons/Twitter.vue';
@@ -218,7 +217,7 @@ const addPost = () => {
                     </div>
                     <div class="w-[calc(100%-100px)]">
                         <div>
-                            <textarea :oninput="textAreaInput" cols="30" rows="4" placeholder="What's happening now?"
+                            <textarea :oninput="textAreaInput" cols="30" rows="4" placeholder="¿Qué se te pasa por la cabeza?"
                                 v-model="post" ref="textarea"
                                 class="w-full bg-black border-0 mt-2 focus:ring-0 text-white text-[19px] font-extrabold min-h-[120px]"></textarea>
                         </div>
@@ -228,7 +227,6 @@ const addPost = () => {
                             <img v-else :src="showUpload" class="rounded-xl min-w-full">
                         </div>
                         <div class="flex py-2 items-center text-[#1C9CEF] font-extrabold">
-                            <Earth class="pr-2 text-white" :size="20" />Everyone can reply
                             <div class="border-b border-b-gray-700"></div>
                             <div class="flex items-center justify-between py-2">
                                 <div class="flex items-center">
@@ -237,12 +235,6 @@ const addPost = () => {
                                             <ImageOutline fillColor="#1C9CEF" :size="25" />
                                         </label>
                                         <input type="file" id="fileUpload" class="hidden" @change="getFile" />
-                                    </div>
-                                    <div class="hover:bg-gray-800 inline-block p-2 rounded-full cursor-pointer">
-                                        <FileGifBox fillcolor="#1C9CEF" :size="25" />
-                                    </div>
-                                    <div class="hover:bg-gray-800 inline-block p-2 rounded-full cursor-pointer">
-                                        <Emoticon fillcolor="#1C9CEF" :size="25" />
                                     </div>
                                 </div>
                             </div>

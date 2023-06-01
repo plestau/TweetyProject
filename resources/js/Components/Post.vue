@@ -19,8 +19,27 @@ const props = defineProps({
   post: Object
 });
 
+let showComments = ref(false);
+
 let userHasDisliked = ref(false);
 let userHasLiked = ref(false);
+
+let createComment = ref(false);
+let newComment = ref('');
+
+async function addComment(postId) {
+  const comment = newComment.value;
+  try {
+    const response = await Inertia.post(`/posts/${postId}/comment`, { comment });
+      props.post.comments.push({ comment });
+      createComment.value = false;
+      newComment.value = '';
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
 
 onMounted(() => {
   userHasLiked.value = props.post.hasLiked;
@@ -91,6 +110,13 @@ const undislike = async () => {
   }
 };
 
+const truncate = (text, maxLength) => {
+  if (text.length <= maxLength) {
+    return text;
+  } else {
+    return text.substring(0, maxLength) + '...';
+  }
+};
 
 let openOptions = ref(false);
 </script>
@@ -117,12 +143,11 @@ let openOptions = ref(false);
           class="absolute mt-1 p-3 right-0 w-[300px] bg-black border border-gray-700 rounded-lg shadow-lg">
           <Link as="button" method="delete" :href="route('post.destroy', { id: post.id })"
             class="flex items-center cursor-pointer">
-          <TrashCanOutline class="pr-3" fillColor="#DC2626" :size="18" />
-          <span class="text-red-600 font-extrabold">
-            Delete
-          </span>
+            <TrashCanOutline class="pr-3" fillColor="#DC2626" :size="18" />
+            <span class="text-red-600 font-extrabold">Delete</span>
           </Link>
         </div>
+
       </div>
     </div>
     <div class="pb-3">{{ post.post }}</div>
@@ -136,12 +161,6 @@ let openOptions = ref(false);
     </div>
     <div class="flex items-center justify-between mt-4 w-4/5">
       <div class="flex">
-        <MessageOutline fillcolor="#5e5c5c" :size="18" />
-        <span class="text-xs font-extrabold text-[#5e5c5c] ml-3">
-          {{ post.comments }}
-        </span>
-      </div>
-      <div class="flex">
         <HeartOutline :class="{ 'text-red-500': userHasLiked }" fillcolor="#5e5c5c" :size="18" @click="likeOrUnlike"
           class="transition-all duration-500 ease-in-out transform hover:scale-110" />
         <span class="text-xs font-extrabold text-[#5e5c5c] ml-3">
@@ -150,17 +169,71 @@ let openOptions = ref(false);
       </div>
 
       <div class="flex">
-        <ThumbDown :class="{ 'text-blue-500': userHasDisliked }" fillcolor="#5e5c5c" :size="18" @click="disLikeOrUnDislike"
-          class="transition-all duration-500 ease-in-out transform hover:scale-110" />
+        <ThumbDown :class="{ 'text-blue-500': userHasDisliked }" fillcolor="#5e5c5c" :size="18"
+          @click="disLikeOrUnDislike" class="transition-all duration-500 ease-in-out transform hover:scale-110" />
       </div>
 
 
       <div class="flex">
-        <ChartBart fillcolor="#5e5c5c" :size="18" />
-        <span class="text-xs font-extrabold text-[#5e5c5c] ml-3">
-          {{ post.analytics }}
+        <span class="text-xs font-extrabold text-[#5e5c5c] ml-3 cursor-pointer mr-4"
+          @click="showComments = !showComments">
+          {{ post.comments.length }}
         </span>
+        <MessageOutline fillcolor="#5e5c5c" class="cursor-pointer ml-2" :size="18"
+          @click="createComment = !createComment" />
+
+        <transition name="slide-fade">
+          <div v-if="createComment" class="w-full mt-4 bg-black rounded-lg p-2">
+            <textarea v-model="newComment" placeholder="Escribe tu comentario..."
+              class="w-full bg-black border-0 focus:ring-0 text-white text-[19px] font-extrabold min-h-[120px]"></textarea>
+            <button @click="addComment(post.id)"
+              class="bg-[#1cef2e] text white font-extrabold text-[16px] p-1.5 px-4 rounded-full cursor-pointer">Comentar</button>
+          </div>
+        </transition>
       </div>
     </div>
+    <transition name="slide-fade">
+      <div v-if="showComments" class="w-full mt-4 bg-black rounded-lg">
+        <h3 class="text-white font-extrabold text-[20px] p-2">Comentarios</h3>
+        <div v-for="comment in post.comments" :key="comment.id" class="flex items-center p-2">
+          <div class="flex items-center">
+            <Link :href="`/profile/${comment.user_id}`">
+              <img class="rounded-full m-2 mt-3" width="50" :src="'/storage/' + comment.user_image">
+            </Link>
+            <div>
+              <p class="text-white">{{ comment.name }}</p>
+              <p class="text-white">{{ comment.username }}</p>
+              <span class="text-xs text-gray-500">{{ timeSince(comment.created_at) }}</span>
+            </div>
+          </div>
+          <div class="ml-2">
+            <p class="text-white">{{ truncate(comment.comment, 50) }}</p>
+          </div>
+          <Link v-if="$page.props.auth.user.id === comment.user_id" as="button" method="delete"
+            :href="route('post.comment.destroy', { post_id: post.id, id: comment.id })" class="flex items-center cursor-pointer">
+            <TrashCanOutline class="pr-3" fillColor="#DC2626" :size="18" />
+          </Link>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to
+
+/* .slide-fade-leave-active below version 2.1.8 */
+{
+  transform: translateY(10px);
+  opacity: 0;
+}
+</style>

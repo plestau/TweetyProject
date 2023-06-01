@@ -43,7 +43,7 @@ watch(username, async (newUsername) => {
 
 const submit = () => {
     let data = new FormData();
-    
+
     Object.keys(form).forEach((key) => {
         data.append(key, form[key]);
     });
@@ -74,7 +74,8 @@ const submit = () => {
             <div>
                 <InputLabel for="username" value="Username" />
 
-                <TextInput id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus autocomplete="username" />
+                <TextInput id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus
+                    autocomplete="username" />
 
                 <InputError class="mt-2" :message="form.errors.username" />
                 <p v-if="usernameTaken" class="text-red-500">{{ usernameTaken }}</p>

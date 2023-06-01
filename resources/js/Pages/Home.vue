@@ -1,10 +1,9 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
-import { usePage } from '@inertiajs/inertia-vue3'
-import { defineProps } from '@vue/runtime-core'
 import TweetyPieHomeLayout from '@/Layouts/TweetyPieHomeLayout.vue'
 import Post from '@/Components/Post.vue'
+import { defineProps } from '@vue/runtime-core'
 
 let { posts: postsProp, recentUsers } = defineProps({
     posts: Object,
@@ -24,6 +23,7 @@ onMounted(() => {
     if (!posts.value.data) {
         loadMorePosts()
     }
+    observeLoadMoreTrigger()
 })
 
 async function loadMorePosts() {
@@ -40,10 +40,14 @@ async function loadMorePosts() {
             console.log('response.data.data is not an array')
         }
         isLoading.value = false
+        nextTick(() => {
+            observeLoadMoreTrigger()
+        })
     }
 }
 
 function observeLoadMoreTrigger() {
+    unobserveLoadMoreTrigger()
     observer.value = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             loadMorePosts()
@@ -61,10 +65,6 @@ function unobserveLoadMoreTrigger() {
 const postsContainer = ref(null)
 const loadMoreTrigger = ref(null)
 
-onMounted(() => {
-    observeLoadMoreTrigger()
-})
-
 watch(() => page.value?.props?.url, (newUrl, oldUrl) => {
     if (oldUrl && newUrl !== oldUrl) {
         unobserveLoadMoreTrigger()
@@ -72,10 +72,21 @@ watch(() => page.value?.props?.url, (newUrl, oldUrl) => {
     observeLoadMoreTrigger()
 })
 
-
 onUnmounted(() => {
     unobserveLoadMoreTrigger()
 })
+
+function deletePost(postId) {
+  // Eliminar el post de la lista de posts
+  posts.value.data = posts.value.data.filter((post) => post.id !== postId);
+
+  // Verificar si es necesario actualizar el estado de isLastPage y page
+  if (posts.value.data.length === 0 && page.value > 1) {
+    page.value--;
+    isLastPage.value = false;
+  }
+}
+
 </script>
 
 <template>
@@ -83,6 +94,7 @@ onUnmounted(() => {
         <div class="text-white" ref="postsContainer">
             <div class="flex" v-for="post in posts.data" :key="post.id">
                 <Post :post="post" />
+                <!--Muestra los comentarios si los hubiera-->
             </div>
             <div ref="loadMoreTrigger" v-if="!isLastPage && !isLoading">
                 Cargando más posts...

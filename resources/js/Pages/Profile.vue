@@ -5,6 +5,7 @@ import Post from '@/Components/Post.vue';
 import { ref } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import Lapiz from 'vue-material-design-icons/Pencil.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 defineProps({ posts: Array });
 
@@ -49,11 +50,25 @@ async function updateBiography() {
                             class="w-full h-full object-cover">
                     </div>
                     <div v-if="$page.props.auth.user">
-                        <p>Name: {{ $page.props.auth.user.name }}</p>
+                        <div class="flex items-center">
+                            <p class="mr-2">Name: {{ $page.props.auth.user.name }}</p>
+                            <Lapiz class="w-4 h-4" @click="toggleEditName" />
+                        </div>
+                        <div v-if="editingName">
+                            <input type="text" v-model="newName" class="text-black bg-white" />
+                            <button @click="updateName">Update</button>
+                        </div>
                         <p>Username: {{ $page.props.auth.user.username }}</p>
                         <p>Email: {{ $page.props.auth.user.email }}</p>
                         <p>Joined: {{ new Date($page.props.auth.user.created_at).toLocaleDateString() }}</p>
-                        <p>Email: {{ $page.props.auth.user.email }}</p>
+                        <div class="flex items-center">
+                            <p class="mr-2">Bio: {{ $page.props.auth.user.biography }}</p>
+                            <Lapiz class="w-4 h-4" @click="toggleEditBio" />
+                        </div>
+                        <div v-if="editingBio">
+                            <input type="text" v-model="newBiography" class="text-black bg-white" />
+                            <button @click="updateBiography">Update</button>
+                        </div>
                     </div>
                     <p v-else>No hay usuario autenticado.</p>
                 </div>
