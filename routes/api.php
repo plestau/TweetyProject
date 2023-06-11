@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Validator;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/search', [ProfileController::class, 'search']);
 
 Route::post('/check-username', function (Request $request) {
     $validator = Validator::make($request->all(), [

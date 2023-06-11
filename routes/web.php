@@ -27,6 +27,7 @@ Route::delete('/posts/{post_id}/comment/{id}', [CommentController::class, 'destr
 Route::post('/posts/{id}/comment', [CommentController::class, 'store'])->name('post.comment.store');
 Route::get('/posts/{id}/comment', [CommentController::class, 'show'])->name('post.comment.show');
 
+
 Route::get('/notifications', function () {
     return Inertia::render('Notifications');
 })->name('pages.notifications');
@@ -49,9 +50,14 @@ Route::get('/profile/{userId}', [ProfileController::class, 'show'])->name('profi
 Route::get('/profile', [ProfileController::class, 'showProfile'])->name('pages.profile');
 Route::post('/profile/update/name', [ProfileController::class, 'updateName'])->name('profile.update.name');
 Route::post('/profile/update/biography', [ProfileController::class, 'updateBiography'])->name('profile.update.biography');
+Route::post('/profile/update/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.update.avatar');
+Route::post('/profile/update/background', [ProfileController::class, 'updateBackground'])->name('profile.update.background');
+Route::post('/profile/delete/background', [ProfileController::class, 'deleteBackground'])->name('profile.delete.background');
+Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
+Route::post('/profile/check-password', [ProfileController::class, 'checkPassword'])->name('profile.checkPassword');
+Route::delete('/profile/delete', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
-Route::get('/register', [HomeController::class, 'register'])->name('register');
+// Route::get('/register', [HomeController::class, 'register'])->name('register');
 Route::get('/login', [HomeController::class, 'login'])->name('login');
 require __DIR__.'/auth.php';
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -23,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'biography',
-        'profile_photo_path'
+        'profile_photo_path',
+        'background_image'
     ];
 
     /**
@@ -59,5 +59,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'likes')->wherePivot('type', false);
     }
-    
 }

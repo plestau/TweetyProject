@@ -75,18 +75,6 @@ watch(() => page.value?.props?.url, (newUrl, oldUrl) => {
 onUnmounted(() => {
     unobserveLoadMoreTrigger()
 })
-
-function deletePost(postId) {
-  // Eliminar el post de la lista de posts
-  posts.value.data = posts.value.data.filter((post) => post.id !== postId);
-
-  // Verificar si es necesario actualizar el estado de isLastPage y page
-  if (posts.value.data.length === 0 && page.value > 1) {
-    page.value--;
-    isLastPage.value = false;
-  }
-}
-
 </script>
 
 <template>
@@ -94,7 +82,6 @@ function deletePost(postId) {
         <div class="text-white" ref="postsContainer">
             <div class="flex" v-for="post in posts.data" :key="post.id">
                 <Post :post="post" />
-                <!--Muestra los comentarios si los hubiera-->
             </div>
             <div ref="loadMoreTrigger" v-if="!isLastPage && !isLoading">
                 Cargando más posts...

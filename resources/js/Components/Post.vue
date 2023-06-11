@@ -1,16 +1,16 @@
 <script setup>
 import { Inertia } from '@inertiajs/inertia';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, inject } from 'vue';
 import { Link } from '@inertiajs/inertia-vue3';
 import HeartOutline from 'vue-material-design-icons/HeartOutline.vue';
-import ChartBart from 'vue-material-design-icons/ChartBar.vue';
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue';
-import ThumbDown from 'vue-material-design-icons/ThumbDown.vue';
+import ThumbDown from 'vue-material-design-icons/ThumbDownOutline.vue';
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue';
 import TrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue';
 import moment from 'moment';
 import axios from 'axios';
 
+// hace x tiempo de un post y de un comentario
 const timeSince = (datetime) => {
   return moment(datetime).fromNow();
 }
@@ -20,26 +20,40 @@ const props = defineProps({
 });
 
 let showComments = ref(false);
-
 let userHasDisliked = ref(false);
 let userHasLiked = ref(false);
-
 let createComment = ref(false);
 let newComment = ref('');
+const isDarkMode = inject('isDarkMode');
 
 async function addComment(postId) {
   const comment = newComment.value;
   try {
     const response = await Inertia.post(`/posts/${postId}/comment`, { comment });
-      props.post.comments.push({ comment });
-      createComment.value = false;
-      newComment.value = '';
+    props.post.comments.push({ comment });
+    createComment.value = false;
+    newComment.value = '';
   } catch (error) {
     console.error(error);
   }
 }
 
+async function deleteComment(post_id, comment_id) {
+  try {
+    const response = await Inertia.delete(`/posts/${post_id}/comment/${comment_id}`);
+    props.post.comments = props.post.comments.filter((comment) => comment.id !== comment_id);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
+async function deletePost(post_id) {
+  try {
+    const response = await Inertia.delete(`/posts/${post_id}`);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 onMounted(() => {
   userHasLiked.value = props.post.hasLiked;
@@ -110,6 +124,7 @@ const undislike = async () => {
   }
 };
 
+// acorta los posts para que quepan
 const truncate = (text, maxLength) => {
   if (text.length <= maxLength) {
     return text;
@@ -122,16 +137,16 @@ let openOptions = ref(false);
 </script>
 
 <template>
-  <div class="min-w-[60px]">
+  <div :class="{ 'bg-black text-white': isDarkMode, 'bg-white text-black': !isDarkMode }" class="min-w-[60px]">
     <Link :href="`/profile/${post.user_id}`">
-      <img class="rounded-full m-2 mt-3" width="50" :src="'/storage/' + post.image">
+    <img class="rounded-full ml-2 mt-1" width="50" :src="'/storage/' + post.image">
     </Link>
   </div>
-  <div class="p-2 w-full">
+  <div :class="{ 'bg-black text-white': isDarkMode, 'bg-white text-black': !isDarkMode }" class="p-2 w-full">
     <div class="font-extrabold flex items-center justify-between mt-0.5 mb-1.5">
       <div class="flex items-center">
         <div>{{ post.name }}</div>
-        <span class="font-[300] text-[15px] text-gray-500 pl-2">{{ post.handle }}</span>
+        <span class="font-[300] -[15px] text-gray-500 pl-2">{{ post.handle }}</span>
       </div>
       <div class="text-xs text-gray-500">{{ timeSince(post.created_at) }}</div>
       <div v-if="$page.props.auth.user.id === post.user_id"
@@ -141,16 +156,14 @@ let openOptions = ref(false);
         </button>
         <div v-if="openOptions"
           class="absolute mt-1 p-3 right-0 w-[300px] bg-black border border-gray-700 rounded-lg shadow-lg">
-          <Link as="button" method="delete" :href="route('post.destroy', { id: post.id })"
-            class="flex items-center cursor-pointer">
+          <button @click="deletePost(post.id)" class="flex items-center cursor-pointer">
             <TrashCanOutline class="pr-3" fillColor="#DC2626" :size="18" />
             <span class="text-red-600 font-extrabold">Delete</span>
-          </Link>
+          </button>
         </div>
-
       </div>
     </div>
-    <div class="pb-3">{{ post.post }}</div>
+    <div :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }" class="pb-3">{{ post.post }}</div>
     <div v-if="post.file">
       <div v-if="!post.is_video" class="rounded-xl">
         <img :src="post.file" class="mt-2 object-fill rounded-xl w-full">
@@ -159,67 +172,69 @@ let openOptions = ref(false);
         <video class="rounded-xl" :src="post.file" controls></video>
       </div>
     </div>
-    <div class="flex items-center justify-between mt-4 w-4/5">
+    <div :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }"
+      class="flex items-center justify-between mt-4 w-4/5">
       <div class="flex">
         <HeartOutline :class="{ 'text-red-500': userHasLiked }" fillcolor="#5e5c5c" :size="18" @click="likeOrUnlike"
           class="transition-all duration-500 ease-in-out transform hover:scale-110" />
-        <span class="text-xs font-extrabold text-[#5e5c5c] ml-3">
+        <span :class="{ 'text-[#5e5c5c]': isDarkMode, 'text-[#333]': !isDarkMode }" class="text-xs font-extrabold ml-3">
           {{ post.likes }}
         </span>
       </div>
-
       <div class="flex">
         <ThumbDown :class="{ 'text-blue-500': userHasDisliked }" fillcolor="#5e5c5c" :size="18"
           @click="disLikeOrUnDislike" class="transition-all duration-500 ease-in-out transform hover:scale-110" />
       </div>
-
-
       <div class="flex">
-        <span class="text-xs font-extrabold text-[#5e5c5c] ml-3 cursor-pointer mr-4"
-          @click="showComments = !showComments">
+        <span :class="{ 'text-[#5e5c5c]': isDarkMode, 'text-[#333]': !isDarkMode }"
+          class="text-xs font-extrabold ml-3 cursor-pointer mr-4" @click="showComments = !showComments">
           {{ post.comments.length }}
         </span>
         <MessageOutline fillcolor="#5e5c5c" class="cursor-pointer ml-2" :size="18"
           @click="createComment = !createComment" />
-
         <transition name="slide-fade">
-          <div v-if="createComment" class="w-full mt-4 bg-black rounded-lg p-2">
+          <div v-if="createComment" :class="{ 'bg-black': isDarkMode, 'bg-white': !isDarkMode }"
+            class="w-full mt-4 rounded-lg p-2">
             <textarea v-model="newComment" placeholder="Escribe tu comentario..."
-              class="w-full bg-black border-0 focus:ring-0 text-white text-[19px] font-extrabold min-h-[120px]"></textarea>
+              :class="{ 'text-white': isDarkMode, 'bg-black': isDarkMode, 'bg-white': !isDarkMode, 'text-black': !isDarkMode }"
+              class="w-full border-0 focus:ring-0 text-[19px] font-extrabold min-h-[120px]"></textarea>
             <button @click="addComment(post.id)"
-              class="bg-[#1cef2e] text white font-extrabold text-[16px] p-1.5 px-4 rounded-full cursor-pointer">Comentar</button>
+              :class="{ 'bg-[#1cef2e]': isDarkMode, 'bg-[#12D477]': !isDarkMode, 'text-white': isDarkMode, 'text-black': !isDarkMode, 'font-extrabold': true, 'text-[16px]': true, 'p-1.5': true, 'px-4': true, 'rounded-full': true, 'cursor-pointer': true }"
+              :disabled="newComment === ''">Comentar</button>
           </div>
         </transition>
       </div>
     </div>
     <transition name="slide-fade">
-      <div v-if="showComments" class="w-full mt-4 bg-black rounded-lg">
-        <h3 class="text-white font-extrabold text-[20px] p-2">Comentarios</h3>
+      <div v-if="showComments" :class="{ 'bg-black': isDarkMode, 'bg-white': !isDarkMode }"
+        class="w-full mt-4 rounded-lg">
+        <h3 :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }" class="font-extrabold text-[20px] p-2">
+          Comentarios</h3>
         <div v-for="comment in post.comments" :key="comment.id" class="flex items-center p-2">
           <div class="flex items-center">
             <Link :href="`/profile/${comment.user_id}`">
-              <img class="rounded-full m-2 mt-3" width="50" :src="'/storage/' + comment.user_image">
+            <img class="rounded-full m-2 mt-3" width="50" :src="'/storage/' + comment.user_image">
             </Link>
             <div>
-              <p class="text-white">{{ comment.name }}</p>
-              <p class="text-white">{{ comment.username }}</p>
+              <p :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }">{{ comment.name }}</p>
+              <p :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }">{{ comment.username }}</p>
               <span class="text-xs text-gray-500">{{ timeSince(comment.created_at) }}</span>
             </div>
           </div>
           <div class="ml-2">
-            <p class="text-white">{{ truncate(comment.comment, 50) }}</p>
+            <p :class="{ 'text-white': isDarkMode, 'text-black': !isDarkMode }">{{ truncate(comment.comment, 50) }}</p>
           </div>
-          <Link v-if="$page.props.auth.user.id === comment.user_id" as="button" method="delete"
-            :href="route('post.comment.destroy', { post_id: post.id, id: comment.id })" class="flex items-center cursor-pointer">
+          <button class="flex items-center cursor-pointer" @click="deleteComment(post.id, comment.id)">
             <TrashCanOutline class="pr-3" fillColor="#DC2626" :size="18" />
-          </Link>
+          </button>
         </div>
       </div>
     </transition>
   </div>
 </template>
 
-<style scoped>
+<!-- Animaciones para mostrar comentarios y para escribirlos -->
+<style scoped> 
 .slide-fade-enter-active {
   transition: all .3s ease;
 }
@@ -232,7 +247,7 @@ let openOptions = ref(false);
 .slide-fade-leave-to
 
 /* .slide-fade-leave-active below version 2.1.8 */
-{
+  {
   transform: translateY(10px);
   opacity: 0;
 }
